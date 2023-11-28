@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EditText xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/field"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:drawableEnd="@drawable/ic_finger_print"
+    android:paddingStart="10dp"
+    android:layout_margin="10dp"
+    android:drawablePadding="10dp"
+    android:lines="1"
+
+    tools:ignore="RtlSymmetry">
+
+</EditText>
