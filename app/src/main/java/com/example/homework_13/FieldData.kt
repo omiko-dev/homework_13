@@ -10,14 +10,4 @@ data class FieldData(
     @SerializedName("required") val required: Boolean,
     @SerializedName("is_active") val issActive: Boolean,
     @SerializedName("icon") val icon: String
-) {}
-
-//enum class FieldType(type: String) {
-//    INPUT("input"),
-//    CHOOSER("chooser")
-//}
-//
-//enum class KeyBoard(keyBoardType: String) {
-//    TEXT("text"),
-//    NUMBER("number")
-//}
+)

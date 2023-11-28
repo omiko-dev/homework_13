@@ -1,6 +1,5 @@
 package com.example.homework_13
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,6 +11,7 @@ class FieldBoxRecyclerView : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var array: Array<Array<FieldData>> = arrayOf()
     private lateinit var adapter: RegisterFieldRecyclerView
+    private var resultMap: MutableMap<Int, String> = mutableMapOf()
 
     inner class FieldBoxViewHolder(private val binding: FieldBoxBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -28,18 +28,23 @@ class FieldBoxRecyclerView : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     inner class RegisterButtonViewHolder(private val binding: RegisterButtonBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun childRecycler() {
-
+            binding.btnRegister.setOnClickListener {
+                val test = adapter.setTest()
+                adapter.onClick = {
+                    setResultData(it)
+                }
+            }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if(viewType == 1){
+        return if (viewType == 1) {
             FieldBoxViewHolder(
                 FieldBoxBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
                 )
             )
-        }else {
+        } else {
             RegisterButtonViewHolder(
                 RegisterButtonBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
@@ -50,17 +55,17 @@ class FieldBoxRecyclerView : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if(position < array.size){
+        return if (position < array.size) {
             1
-        }else{
+        } else {
             2
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if(holder is FieldBoxViewHolder){
+        if (holder is FieldBoxViewHolder) {
             holder.childRecycler()
-        }else if(holder is RegisterButtonViewHolder){
+        } else if (holder is RegisterButtonViewHolder) {
             holder.childRecycler()
         }
     }
@@ -72,5 +77,9 @@ class FieldBoxRecyclerView : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     fun setList(array: Array<Array<FieldData>>) {
         this.array = array
         notifyItemRangeChanged(0, this.array.size)
+    }
+
+    fun setResultData(result: MutableMap<Int, String>){
+        resultMap.putAll(result)
     }
 }
