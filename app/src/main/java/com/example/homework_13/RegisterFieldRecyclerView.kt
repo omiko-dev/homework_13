@@ -5,33 +5,27 @@ import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework_13.databinding.RegisterChooserFieldBinding
 import com.example.homework_13.databinding.RegisterInputFieldBinding
 import java.text.DateFormatSymbols
-import kotlin.collections.MutableMap
-import kotlin.collections.mutableMapOf
 import kotlin.collections.set
 
 class RegisterFieldRecyclerView : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-
     private var fieldArray: Array<FieldData> = arrayOf()
     private var finalResult: MutableMap<Int, String> = mutableMapOf()
     var onClick: ((MutableMap<Int, String>) -> Unit)? = null
 
-    private val birthdayArr: Array<String> by lazy {
+    private val birthdayArr: Array<String?> by lazy {
         val dataFormatSymbols = DateFormatSymbols()
-        dataFormatSymbols.months
-    }
-    private val gender: Array<String> by lazy {
-        arrayOf("Male", "Female")
+        arrayOf(null, *dataFormatSymbols.months)
     }
 
-    fun setTest(): MutableMap<Int, String> {
-        return finalResult
+    private val gender: Array<String?> by lazy {
+        arrayOf(null, Gender.MALE.gender, Gender.FEMALE.gender)
     }
 
     inner class RegisterInputFieldViewHolder(private val binding: RegisterInputFieldBinding) :
@@ -44,24 +38,21 @@ class RegisterFieldRecyclerView : RecyclerView.Adapter<RecyclerView.ViewHolder>(
                 else InputType.TYPE_CLASS_NUMBER
             }
         }
+
         fun validator() {
             val fieldData = fieldArray[adapterPosition]
 
             with(binding) {
                 field.addTextChangedListener {
-                    if (field.text.isEmpty() && fieldData.required) {
-                        tvError.visibility = View.VISIBLE
-                    } else {
-                        tvError.visibility = View.GONE
-                        setResult(fieldData.fieldId, field.text.toString())
-                        onClick?.invoke(finalResult)
-                    }
+                    tvError.visibility = View.GONE
+                    setResult(fieldData.fieldId, field.text.toString())
+                    onClick?.invoke(finalResult)
                 }
             }
         }
     }
 
-    fun setResult(key: Int, value: String){
+    fun setResult(key: Int, value: String) {
         finalResult[key] = value
     }
 
@@ -69,7 +60,7 @@ class RegisterFieldRecyclerView : RecyclerView.Adapter<RecyclerView.ViewHolder>(
         RecyclerView.ViewHolder(binding.root) {
         fun bind() {
             val field = fieldArray[adapterPosition]
-            with(binding.field) {
+            with(binding.spinner) {
                 prompt = field.hint
                 val adapter = ArrayAdapter<String>(context, R.layout.simple_spinner_item)
                 adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
@@ -86,13 +77,32 @@ class RegisterFieldRecyclerView : RecyclerView.Adapter<RecyclerView.ViewHolder>(
                 this.adapter = adapter
             }
         }
-    }
 
+        fun getFieldData() {
+            with(binding) {
+                val fieldData = fieldArray[adapterPosition]
+                spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(
+                        parent: AdapterView<*>?,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+                        val value = parent?.getItemAtPosition(position).toString()
+                        setResult(fieldData.fieldId, value)
+                        onClick?.invoke(finalResult)
+                    }
+
+                    override fun onNothingSelected(parent: AdapterView<*>?) {}
+                }
+            }
+        }
+    }
 
     override fun getItemViewType(position: Int): Int {
         return when (fieldArray[position].fieldType) {
-            "input" -> 0
-            "choose" -> 1
+            FieldType.INPUT.type -> 0
+            FieldType.CHOOSE.type -> 1
             else -> -1
         }
     }
@@ -124,6 +134,7 @@ class RegisterFieldRecyclerView : RecyclerView.Adapter<RecyclerView.ViewHolder>(
         }
         if (holder is RegisterChooserFieldViewHolder) {
             holder.bind()
+            holder.getFieldData()
         }
     }
 
@@ -131,5 +142,4 @@ class RegisterFieldRecyclerView : RecyclerView.Adapter<RecyclerView.ViewHolder>(
         this.fieldArray = fieldArray
         notifyItemRangeChanged(0, fieldArray.size)
     }
-
 }

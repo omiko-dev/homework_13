@@ -24,8 +24,10 @@ abstract class BaseFragment<VB : ViewBinding>(private val inflate: Inflater<VB>)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        convertJsonToClass()
+
+        setJsonData()
         setUpRecycler()
+        getJsonData()
     }
 
     override fun onDestroyView() {
@@ -33,8 +35,10 @@ abstract class BaseFragment<VB : ViewBinding>(private val inflate: Inflater<VB>)
         _binding = null
     }
 
-    abstract fun convertJsonToClass()
-
     abstract fun setUpRecycler()
+
+    abstract fun setJsonData()
+
+    abstract fun getJsonData()
 
 }

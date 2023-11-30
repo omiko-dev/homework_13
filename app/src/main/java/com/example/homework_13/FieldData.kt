@@ -11,3 +11,13 @@ data class FieldData(
     @SerializedName("is_active") val issActive: Boolean,
     @SerializedName("icon") val icon: String
 )
+
+enum class FieldType(val type: String) {
+    INPUT("input"),
+    CHOOSE("choose")
+}
+
+enum class Gender(val gender: String) {
+    MALE("Male"),
+    FEMALE("Female")
+}
